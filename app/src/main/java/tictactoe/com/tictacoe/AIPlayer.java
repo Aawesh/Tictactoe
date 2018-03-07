@@ -28,6 +28,7 @@ public class AIPlayer {
             actionValues = AIActivity.qTable.getActionValueArray(this.currentState);
 
             this.moveIndex = getAIMove(actionValues,this.currentState);
+            System.out.println("this.moveIndex = " + this.moveIndex);
 
 
         }while(!g.isValidMove(this.moveIndex));
@@ -182,6 +183,9 @@ public class AIPlayer {
                     }
                 }
             }
+
+            System.out.println("state==" + state + "=======");
+            System.out.println("Arrays.toString() = " + Arrays.toString(actionValues));
 
             if(indexList.size() == 1){
                 return (int) indexList.get(0);

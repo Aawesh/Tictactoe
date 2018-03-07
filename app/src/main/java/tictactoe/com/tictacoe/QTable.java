@@ -42,33 +42,8 @@ public class QTable {
 
     public HashMap<String, double []> loadQTable(){
         HashMap<String, double []> mMap = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("qtable.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                double [] values = new double[9];
-                String[] data = line.split(":");
-                String[] array = data[1].split(",");
-                for(int i= 0;i<9;i++){
-                    values[i] = Double.parseDouble(array[i]);
-                }
 
-                mMap.put(data[0],values);
-            }
-        }catch (IOException e) {
-            try {
-                File file = new File("qtable.txt");
-
-                if (!file.exists()){
-                    file.createNewFile();
-                }
-            } catch (IOException exp){
-                exp.printStackTrace();
-            }
-        }
-
-
-
-        File sdcard = Environment.getExternalStorageDirectory();
+        String sdcard = Environment.getExternalStorageDirectory() + File.separator + "Tictactoe";
 
         File file = new File(sdcard,"qtable.txt");
 
@@ -138,9 +113,11 @@ public class QTable {
         }
 
 
+        String data = "";
         for (String state : qMap.keySet()) {
-            writeToFile(state +":"+Arrays.toString(qMap.get(state)).replace("[","").replace("]",""),"qtable");
+            data+= state +":"+Arrays.toString(qMap.get(state)).replace("[","").replace("]","")+"\n";
         }
+        writeToFile(data,"qtable");
     }
 
     public void writeToFile(String data,String filename) {

@@ -5,6 +5,7 @@
 package tictactoe.com.tictacoe;
 
         import android.graphics.Color;
+        import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
@@ -531,7 +532,8 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     private void result(String winner){
         Log.d(TAG, "Inside result");
 
-        setInfo(winner);
+        String player = turn?"HUMAN":"AI";
+        setInfo(player +" "+winner);
 
         gamestatus("END");
 
@@ -542,6 +544,11 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         if(status.equalsIgnoreCase("END")){
             rematch_button.setVisibility(View.VISIBLE);
             menu_button.setVisibility(View.VISIBLE);
+
+            System.out.println("qTable.getQTable().size() = " + qTable.getQTable().size());
+            //save q table to file
+            new LongOperation().execute();
+
         }else{
             rematch_button.setVisibility(View.GONE);
             menu_button.setVisibility(View.GONE);
@@ -565,8 +572,8 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
         game.resetBoard();
 
-        turn = random.nextBoolean(); // determine turn
-//        turn = true;
+//        turn = random.nextBoolean(); // determine turn
+        turn = false;
         swapTurn = random.nextBoolean();
 //        swapTurn = false;
 
@@ -594,6 +601,25 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         //toDo nothing add a dialog box to ask confirmation
+    }
+
+    private class LongOperation extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            qTable.save();
+
+            return "Executed";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {}
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
     }
 
 }
