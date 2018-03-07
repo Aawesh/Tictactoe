@@ -1,6 +1,10 @@
 package tictactoe.com.tictacoe;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,17 +17,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
 
-        final Intent gameIntent = new Intent(this, GameActivity.class);
+        final Intent humanVsHuman = new Intent(this, HumanActivity.class);
+        final Intent humanVsAI = new Intent(this, AIActivity.class);
 
         Button humanButton  = (Button)findViewById(R.id.human_button);
         Button aiLevelOneButton  = (Button)findViewById(R.id.ai_level1_button);
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 12);
+
+                return;
+            }
+        }
 
         humanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO set params as human
-                gameIntent.putExtra("player","human");
-                startActivity(gameIntent);
+                humanVsHuman.putExtra("player","human");
+                startActivity(humanVsHuman);
 
             }
         });
@@ -32,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ////TODO set params for level1
+                humanVsAI.putExtra("player","ai");
+                startActivity(humanVsAI);
             }
         });
     }

@@ -13,7 +13,7 @@ import android.widget.Toast;
  * Created by aawesh on 1/19/18.
  */
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class HumanActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
     int[][] boardStatus;
@@ -67,12 +67,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boardStatus = new int[3][3];
 
         initializeBoardStatus();
+/*
 
         String opponent = getIntent().getStringExtra("player");
         if(opponent.equalsIgnoreCase("human")){
             startGameWithHuman();
+        }else{
+            //TODO else if play with ai level
         }
-        //TODO else if play with ai level
+*/
 
     }
 
@@ -83,10 +86,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+/*
 
     private void startGameWithHuman(){
         //TODO set game parameters
     }
+*/
 
     @Override
     public void onClick(View view) {
@@ -225,7 +230,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             setInfo("Player 0's turn");
         }
 
-        if(TURN_COUNT==9){
+        if(TURN_COUNT==8){
             setInfo("Game Draw");
             gamestatus("END");
         }
