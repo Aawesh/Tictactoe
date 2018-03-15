@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button humanButton  = (Button)findViewById(R.id.human_button);
         Button aiLevelOneButton  = (Button)findViewById(R.id.ai_level1_button);
+        Button aiLevelTwoButton  = (Button)findViewById(R.id.ai_level2_button);
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
@@ -52,7 +53,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ////TODO set params for level1
-                humanVsAI.putExtra("player","ai");
+                humanVsAI.putExtra("player","ai1");
+                startActivity(humanVsAI);
+            }
+        });
+
+        aiLevelTwoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ////TODO set params for level1
+                humanVsAI.putExtra("player","ai2");
                 startActivity(humanVsAI);
             }
         });

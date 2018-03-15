@@ -25,6 +25,7 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
     Button rematch_button;
 
     TextView tvInfo;
+    TextView header;
 
     int TURN_COUNT = 0;
 
@@ -52,6 +53,9 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
         rematch_button = (Button) findViewById(R.id.rematch_button);
 
         tvInfo = (TextView) findViewById(R.id.tvInfo);
+        header = (TextView) findViewById(R.id.header);
+        header.setText("HUMAN vs HUMAN");
+
 
         gamestatus("START");
 
@@ -67,35 +71,22 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
         boardStatus = new int[3][3];
 
         initializeBoardStatus();
-/*
-
-        String opponent = getIntent().getStringExtra("player");
-        if(opponent.equalsIgnoreCase("human")){
-            startGameWithHuman();
-        }else{
-            //TODO else if play with ai level
-        }
-*/
-
     }
 
     private void initializeBoardStatus(){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 boardStatus[i][j] = -1;
+                button[i][j].setTextSize(40);
+
             }
         }
     }
-/*
-
-    private void startGameWithHuman(){
-        //TODO set game parameters
-    }
-*/
 
     @Override
     public void onClick(View view) {
         Log.d(TAG, "Inside onClick");
+        Boolean flag = true;
 
         switch (view.getId()){
             case R.id.b00:
@@ -207,39 +198,36 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.menu_button:
+                flag = false;
                 super.onBackPressed();
                 break;
 
             case R.id.rematch_button:
+                flag = false;
                 resetBoard();
                 break;
 
             default:
                 break;
-
         }
 
+        if(flag == true){
+            PLAYER_X = !PLAYER_X;
 
-        Log.v(TAG,TURN_COUNT+"");
-        PLAYER_X = !PLAYER_X;
+            if(PLAYER_X){
+                setInfo("Player X's turn");
+            }
+            else {
+                setInfo("Player 0's turn");
+            }
 
-        if(PLAYER_X){
-            setInfo("Player X's turn");
+            TURN_COUNT ++;
+            Log.v(TAG,TURN_COUNT+"");
+            checkWinner(TURN_COUNT);
         }
-        else {
-            setInfo("Player 0's turn");
-        }
-
-        if(TURN_COUNT==8){
-            setInfo("Game Draw");
-            gamestatus("END");
-        }
-
-        TURN_COUNT ++;
-        checkWinner();
     }
 
-    private void checkWinner(){
+    private void checkWinner(int turnCount){
 
         Log.d(TAG, "Inside checkWinner");
 
@@ -256,9 +244,6 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
                     showWinPattern(button[i][0],button[i][1],button[i][2]);
                     break;
                 }
-
-
-
             }
         }
 
@@ -275,8 +260,6 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
                     showWinPattern(button[0][i],button[1][i],button[2][i]);
                     break;
                 }
-
-
             }
         }
 
@@ -290,8 +273,7 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
                 result("Player 0 wins");
                 showWinPattern(button[0][0],button[1][1],button[2][2]);
             }
-
-
+            return;
         }
 
         //Second diagonal
@@ -304,8 +286,11 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
                 result("Player 0 wins");
                 showWinPattern(button[0][2],button[1][1],button[2][0]);
             }
+            return;
+        }
 
-
+        if(turnCount == 9){
+            result("Game Draw");
         }
     }
 
@@ -373,7 +358,7 @@ public class HumanActivity extends AppCompatActivity implements View.OnClickList
 
         setInfo("Start !!! Player X's turn");
 
-        Toast.makeText(this,"Board Reset",Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this,"Board Reset",Toast.LENGTH_SHORT).show();
     }
 
     @Override

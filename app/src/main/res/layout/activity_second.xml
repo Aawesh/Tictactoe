@@ -19,7 +19,7 @@
         android:rowCount="3"
         android:layout_marginLeft="5px"
         android:layout_marginRight="5px"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="27dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true">
@@ -173,4 +173,16 @@
         android:layout_marginTop="30dp"
         android:layout_below="@+id/tvInfo"
         android:layout_alignEnd="@+id/glGameBoard"/>
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/tvInfo"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="47dp"
+        android:textStyle="bold"
+        android:textSize="70px"
+        android:text="" />
 </RelativeLayout>

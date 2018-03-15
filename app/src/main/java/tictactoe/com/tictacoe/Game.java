@@ -5,11 +5,11 @@ import java.util.List;
 
 public class Game {
     private String boardStatus;
-    private double discount;
+    private double temperature;
 
-    public Game(){
+    public Game(double tempaerature){
         boardStatus = "         ";
-        discount = 0.9;
+        this.temperature = tempaerature;
     }
 
     public void displayBoard(){
@@ -61,5 +61,9 @@ public class Game {
 
     public void resetBoard(){
         boardStatus = "         ";
+    }
+
+    public double getTemperature(){
+        return this.temperature;
     }
 }

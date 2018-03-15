@@ -27,7 +27,7 @@ public class AIPlayer {
             //1. Select random AIActivity from the q table move if the reward is same for all or some move
             actionValues = AIActivity.qTable.getActionValueArray(this.currentState);
 
-            this.moveIndex = getAIMove(actionValues,this.currentState);
+            this.moveIndex = getAIMove(actionValues,this.currentState,g);
             System.out.println("this.moveIndex = " + this.moveIndex);
 
 
@@ -169,36 +169,78 @@ public class AIPlayer {
      *
      * @return index of movement
      */
-    public static int getAIMove(double [] actionValues,String state){
-        int maxIndex = getIndexOfLargest(state,actionValues);
-        System.out.println("maxIndex = " + maxIndex);
-        System.out.println("state===" + state+"======");
-        if(maxIndex != -1){
-            List indexList = new ArrayList();
-            char[] st = state.toCharArray();
-            for ( int i = 0; i < actionValues.length; i++ ){
-                if(st[i] == ' '){ //Exclude filled position for selection of next move
-                    if ( actionValues[i] == actionValues[maxIndex] ){ //TODO must be equal to because we select random from same values
-                        indexList.add(i);
-                    }
+    public static int getAIMove(double [] actionValues,String state,Game g){
+        List<Integer> indexList = new ArrayList();
+        List<Double> qValueList = new ArrayList();
+
+        char[] st = state.toCharArray();
+        for ( int i = 0; i < actionValues.length; i++ ){
+            if(st[i] == ' '){ //Exclude filled position for selection of next move
+                indexList.add(i);
+                qValueList.add(actionValues[i]);
+            }
+        }
+
+        if(indexList.size() == 1){
+            return indexList.get(0);
+        }else{
+            List<Double> pDistribution = new ArrayList();
+            double pSum = 0.0;
+            for ( int i = 0; i < qValueList.size(); i++ ){
+                pDistribution.add(i,Math.exp(qValueList.get(i)/g.getTemperature()));
+                pSum += pDistribution.get(i);
+            }
+
+            for ( int i = 0; i < qValueList.size(); i++ ){
+                pDistribution.set(i,pDistribution.get(i)/pSum);
+            }
+
+            return getRandomSample(pDistribution,indexList);
+        }
+    }
+
+    static int getRandomSample(List<Double> pDistribution, List<Integer> indexList){
+
+        int n = pDistribution.size();
+        double rU;
+        int nm1 = n - 1;
+
+  /*  *//* record element identities *//*
+        for (int i = 0; i < n; i++){
+            indexList.set(i,i+1);
+        }*/
+
+    /* sort the probabilities into descending order */
+        double temp;
+        int  temp1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 1; j < (n - i); j++) {
+                if (pDistribution.get(j-1) < pDistribution.get(j)) {
+                    temp = pDistribution.get(j-1);
+                    pDistribution.set(j-1,pDistribution.get(j));
+                    pDistribution.set(j,temp);
+
+                    temp1 = indexList.get(j-1);
+                    indexList.set(j-1,indexList.get(j));
+                    indexList.set(j,temp1);
                 }
             }
-
-            System.out.println("state==" + state + "=======");
-            System.out.println("Arrays.toString() = " + Arrays.toString(actionValues));
-
-            if(indexList.size() == 1){
-                return (int) indexList.get(0);
-            }else{
-                Random randomizer = new Random();
-                System.out.println("indexList.toString() = " + indexList.toString());
-                System.out.println("randomizer.nextInt(intexList.size()) = " + randomizer.nextInt(indexList.size()));
-                int random = (int) indexList.get(randomizer.nextInt(indexList.size()));
-                return random;
-            }
-        }else{
-            return -1;
         }
+
+    /* compute cumulative probabilities */
+        for (int i = 1 ; i < n; i++) {
+            pDistribution.set(i, pDistribution.get(i) + pDistribution.get(i - 1));
+        }
+
+    /* compute the sample */
+        rU = pDistribution.get(new Random().nextInt(pDistribution.size()));
+        int j;
+        for (j = 0; j < nm1; j++) {
+            if (rU <= pDistribution.get(j)) {
+                break;
+            }
+        }
+        return indexList.get(j);
     }
 
     public static int getIndexOfLargest( String state, double[] array ){

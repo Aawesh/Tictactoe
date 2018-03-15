@@ -4,9 +4,12 @@
 
 package tictactoe.com.tictacoe;
 
+        import android.content.DialogInterface;
+        import android.content.Intent;
         import android.graphics.Color;
         import android.os.AsyncTask;
         import android.os.Bundle;
+        import android.support.v7.app.AlertDialog;
         import android.support.v7.app.AppCompatActivity;
         import android.util.Log;
         import android.view.View;
@@ -21,7 +24,7 @@ package tictactoe.com.tictacoe;
  * Created by aawesh on 1/19/18.
  */
 
-public class AIActivity extends AppCompatActivity implements View.OnClickListener {
+public class AIActivity extends AppCompatActivity implements View.OnClickListener{
 
     private final static String TAG = MainActivity.class.getSimpleName();
     int[][] boardStatus;
@@ -33,6 +36,8 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     Button rematch_button;
 
     TextView tvInfo;
+    TextView header;
+    String headerString;
 
     int TURN_COUNT = 0;
 
@@ -71,6 +76,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         rematch_button = (Button) findViewById(R.id.rematch_button);
 
         tvInfo = (TextView) findViewById(R.id.tvInfo);
+        header = (TextView) findViewById(R.id.header);
 
         gamestatus("START");
 
@@ -87,7 +93,18 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
         initializeBoardStatus();
 
-        game = new Game();
+        Intent i = getIntent();
+        Bundle b = i.getExtras();
+        if(b.getString("player").equalsIgnoreCase("ai1")){
+            game = new Game(0.4);
+            headerString = "LEVEL - EASY";
+        }else{
+            game = new Game(0.02);
+            headerString = "LEVEL - HARD";
+        }
+
+        header.setText(headerString);
+
         qTable = new QTable();
 
         //Turn is determined randomly. sometimes human play 'X' i.e. 1 sometimes 'O', i.e 0
@@ -110,7 +127,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
     private void play() {
         game.resetBoard();
-        resetBoard(); //reset display
 
         aiPlayer = new AIPlayer();
         humanPlayer = new HumanPlayer();
@@ -118,17 +134,57 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         aiPlayer.setTerminalState(false);
         humanPlayer.setTerminalState(false);
 
-        if(swapTurn){   // if true then AI first
-            System.out.println("AI turn = " + turn);
-            int index = aiPlayer.makeMove(game,turn);
-            updateBoardStatus(index); //perform AI move in board
-        }
+        resetBoard(); //reset display
+
+
+    }
+
+    void askFirstPlayer(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want to go first?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        swapTurn = false;
+                        header.setText(headerString+"  1P HUMAN(X)");
+
+                        if(swapTurn){   // if true then AI first
+                            turn = false; // AI always play 0
+                            System.out.println("AI turn = " + turn);
+                            int index = aiPlayer.makeMove(game,turn);
+                            updateBoardStatus(index); //perform AI move in board
+                        }
+                    }
+                });
+
+        builder.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        swapTurn = true;
+                        header.setText(headerString + "  1P AI(O)");
+
+                        if(swapTurn){   // if true then AI first
+                            turn = false; // AI always play 0
+                            System.out.println("AI turn = " + turn);
+                            int index = aiPlayer.makeMove(game,turn);
+                            updateBoardStatus(index); //perform AI move in board
+                        }
+                    }
+                });
+
+        AlertDialog alert11 = builder.create();
+        alert11.show();
     }
 
     private void initializeBoardStatus(){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 boardStatus[i][j] = -1;
+                button[i][j].setTextSize(40);
             }
         }
     }
@@ -572,10 +628,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
         game.resetBoard();
 
-//        turn = random.nextBoolean(); // determine turn
-        turn = false;
-        swapTurn = random.nextBoolean();
-//        swapTurn = false;
+        turn = false; // !turn is done before humman make move so Human plays X
 
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
@@ -595,7 +648,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
         setInfo("");
 
-        Toast.makeText(this,"Board Reset",Toast.LENGTH_SHORT).show();
+        askFirstPlayer();
     }
 
     @Override

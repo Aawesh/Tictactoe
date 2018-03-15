@@ -21,6 +21,15 @@
         android:layout_alignStart="@+id/human_button"
         android:layout_below="@+id/human_button"
         android:layout_marginTop="76dp"
-        android:text="     Human vs AI      " />
+        android:text="     AI Level Easy     " />
+
+    <Button
+        android:id="@+id/ai_level2_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/human_button"
+        android:layout_below="@+id/ai_level1_button"
+        android:layout_marginTop="76dp"
+        android:text="    AI Level Hard    " />
 
 </RelativeLayout>
