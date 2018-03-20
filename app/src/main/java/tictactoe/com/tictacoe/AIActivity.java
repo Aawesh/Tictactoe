@@ -3,11 +3,9 @@
  */
 
 package tictactoe.com.tictacoe;
-
         import android.content.DialogInterface;
         import android.content.Intent;
         import android.graphics.Color;
-        import android.os.AsyncTask;
         import android.os.Bundle;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.app.AppCompatActivity;
@@ -15,10 +13,7 @@ package tictactoe.com.tictacoe;
         import android.view.View;
         import android.widget.Button;
         import android.widget.TextView;
-        import android.widget.Toast;
-
         import java.util.HashMap;
-        import java.util.Random;
 
 /**
  * Created by aawesh on 1/19/18.
@@ -48,7 +43,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     private static Game game;
     private boolean turn;
     private boolean swapTurn;
-    private Random random;
 
     private HashMap<Integer,Button> buttonHashMap;
 
@@ -60,23 +54,23 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
 
         button = new Button[3][3];
 
-        button[0][0] = (Button) findViewById(R.id.b00);
-        button[0][1] = (Button) findViewById(R.id.b01);
-        button[0][2] = (Button) findViewById(R.id.b02);
+        button[0][0] = findViewById(R.id.b00);
+        button[0][1] = findViewById(R.id.b01);
+        button[0][2] = findViewById(R.id.b02);
 
-        button[1][0] = (Button) findViewById(R.id.b10);
-        button[1][1] = (Button) findViewById(R.id.b11);
-        button[1][2] = (Button) findViewById(R.id.b12);
+        button[1][0] = findViewById(R.id.b10);
+        button[1][1] = findViewById(R.id.b11);
+        button[1][2] = findViewById(R.id.b12);
 
-        button[2][0] = (Button) findViewById(R.id.b20);
-        button[2][1] = (Button) findViewById(R.id.b21);
-        button[2][2] = (Button) findViewById(R.id.b22);
+        button[2][0] = findViewById(R.id.b20);
+        button[2][1] = findViewById(R.id.b21);
+        button[2][2] = findViewById(R.id.b22);
 
-        menu_button = (Button) findViewById(R.id.menu_button);
-        rematch_button = (Button) findViewById(R.id.rematch_button);
+        menu_button = findViewById(R.id.menu_button);
+        rematch_button = findViewById(R.id.rematch_button);
 
-        tvInfo = (TextView) findViewById(R.id.tvInfo);
-        header = (TextView) findViewById(R.id.header);
+        tvInfo = findViewById(R.id.tvInfo);
+        header = findViewById(R.id.header);
 
         gamestatus("START");
 
@@ -96,7 +90,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         Intent i = getIntent();
         Bundle b = i.getExtras();
         if(b.getString("player").equalsIgnoreCase("ai1")){
-            game = new Game(0.4);
+            game = new Game(0.5);
             headerString = "LEVEL - EASY";
         }else{
             game = new Game(0.02);
@@ -104,11 +98,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         }
 
         header.setText(headerString);
-
-        qTable = new QTable();
-
-        //Turn is determined randomly. sometimes human play 'X' i.e. 1 sometimes 'O', i.e 0
-        random = new Random();
 
         buttonHashMap = new HashMap<>();
         buttonHashMap.put(0,button[0][0]);
@@ -131,9 +120,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         aiPlayer = new AIPlayer();
         humanPlayer = new HumanPlayer();
 
-        aiPlayer.setTerminalState(false);
-        humanPlayer.setTerminalState(false);
-
         resetBoard(); //reset display
 
 
@@ -151,10 +137,11 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                         swapTurn = false;
                         header.setText(headerString+"  1P HUMAN(X)");
 
+                        qTable = new QTable("qtable_ai_second.txt");
+
                         if(swapTurn){   // if true then AI first
                             turn = false; // AI always play 0
-                            System.out.println("AI turn = " + turn);
-                            int index = aiPlayer.makeMove(game,turn);
+                            int index = aiPlayer.makeLearnedMove(game,turn);
                             updateBoardStatus(index); //perform AI move in board
                         }
                     }
@@ -167,10 +154,13 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                         swapTurn = true;
                         header.setText(headerString + "  1P AI(O)");
 
+                        qTable = new QTable("qtable_ai_first.txt");
+
+
                         if(swapTurn){   // if true then AI first
                             turn = false; // AI always play 0
                             System.out.println("AI turn = " + turn);
-                            int index = aiPlayer.makeMove(game,turn);
+                            int index = aiPlayer.makeLearnedMove(game,turn);
                             updateBoardStatus(index); //perform AI move in board
                         }
                     }
@@ -194,7 +184,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         Log.d(TAG, "Inside onClick");
 
         turn = !turn;
-        System.out.println("human turn = " + turn);
 
         switch (view.getId()){
             case R.id.b00:
@@ -206,7 +195,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[0][0].setText("O");
                     boardStatus[0][0] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,0,turn);
+                humanPlayer.makeMove(game,0,turn);
                 button[0][0].setEnabled(false);
                 break;
 
@@ -219,7 +208,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[0][1].setText("O");
                     boardStatus[0][1] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,1,turn);
+                humanPlayer.makeMove(game,1,turn);
 
                 button[0][1].setEnabled(false);
                 break;
@@ -233,7 +222,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[0][2].setText("O");
                     boardStatus[0][2] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,2,turn);
+                humanPlayer.makeMove(game,2,turn);
 
                 button[0][2].setEnabled(false);
                 break;
@@ -247,7 +236,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[1][0].setText("O");
                     boardStatus[1][0] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,3,turn);
+                humanPlayer.makeMove(game,3,turn);
 
                 button[1][0].setEnabled(false);
                 break;
@@ -261,7 +250,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[1][1].setText("O");
                     boardStatus[1][1] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,4,turn);
+                humanPlayer.makeMove(game,4,turn);
 
                 button[1][1].setEnabled(false);
                 break;
@@ -275,7 +264,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[1][2].setText("O");
                     boardStatus[1][2] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,5,turn);
+                humanPlayer.makeMove(game,5,turn);
 
                 button[1][2].setEnabled(false);
                 break;
@@ -289,7 +278,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[2][0].setText("O");
                     boardStatus[2][0] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,6,turn);
+                humanPlayer.makeMove(game,6,turn);
 
                 button[2][0].setEnabled(false);
                 break;
@@ -303,7 +292,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[2][1].setText("O");
                     boardStatus[2][1] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,7,turn);
+                humanPlayer.makeMove(game,7,turn);
 
                 button[2][1].setEnabled(false);
                 break;
@@ -317,7 +306,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
                     button[2][2].setText("O");
                     boardStatus[2][2] = 0;
                 }
-                humanPlayer.makeMove(game,aiPlayer,8,turn);
+                humanPlayer.makeMove(game,8,turn);
 
                 button[2][2].setEnabled(false);
                 break;
@@ -334,9 +323,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         if(checkWinner() == false){
             if(TURN_COUNT != 9 && TURN_COUNT <10){
                 turn = !turn;
-                System.out.println("AI turn = " + turn);
-                System.out.println("checkWinner() = " + checkWinner());
-                int index = aiPlayer.makeMove(game,turn);
+                int index = aiPlayer.makeLearnedMove(game,turn);
                 updateBoardStatus(index);
 
                 Log.v(TAG,TURN_COUNT+"");
@@ -586,8 +573,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void result(String winner){
-        Log.d(TAG, "Inside result");
-
         String player = turn?"HUMAN":"AI";
         setInfo(player +" "+winner);
 
@@ -601,21 +586,14 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
             rematch_button.setVisibility(View.VISIBLE);
             menu_button.setVisibility(View.VISIBLE);
 
-            System.out.println("qTable.getQTable().size() = " + qTable.getQTable().size());
-            //save q table to file
-            new LongOperation().execute();
-
         }else{
             rematch_button.setVisibility(View.GONE);
             menu_button.setVisibility(View.GONE);
-            //tvInfo.setText("Start. X's turn");
         }
 
     }
 
     private void enableAllBoxes(boolean value){
-        Log.d(TAG, "Inside enableAllBoxes");
-
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
                 button[i][j].setEnabled(value);
@@ -624,8 +602,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void resetBoard(){
-        Log.d(TAG, "Inside resetBoard");
-
         game.resetBoard();
 
         turn = false; // !turn is done before humman make move so Human plays X
@@ -654,25 +630,6 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
     @Override
     public void onBackPressed() {
         //toDo nothing add a dialog box to ask confirmation
-    }
-
-    private class LongOperation extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            qTable.save();
-
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {}
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
     }
 
 }
