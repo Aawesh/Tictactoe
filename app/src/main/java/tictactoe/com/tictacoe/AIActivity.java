@@ -93,7 +93,7 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
             game = new Game(0.5);
             headerString = "LEVEL - EASY";
         }else{
-            game = new Game(0.02);
+            game = new Game(0.005);
             headerString = "LEVEL - HARD";
         }
 
