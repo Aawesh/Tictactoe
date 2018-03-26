@@ -90,8 +90,11 @@ public class AIActivity extends AppCompatActivity implements View.OnClickListene
         Intent i = getIntent();
         Bundle b = i.getExtras();
         if(b.getString("player").equalsIgnoreCase("ai1")){
-            game = new Game(0.5);
+            game = new Game(1);
             headerString = "LEVEL - EASY";
+        }else if(b.getString("player").equalsIgnoreCase("ai2")){
+            game = new Game(0.5);
+            headerString = "LEVEL - MEDIUM";
         }else{
             game = new Game(0.005);
             headerString = "LEVEL - HARD";

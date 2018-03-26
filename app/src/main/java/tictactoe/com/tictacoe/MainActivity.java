@@ -20,9 +20,10 @@ public class MainActivity extends AppCompatActivity {
         final Intent humanVsHuman = new Intent(this, HumanActivity.class);
         final Intent humanVsAI = new Intent(this, AIActivity.class);
 
-        Button humanButton  = (Button)findViewById(R.id.human_button);
-        Button aiLevelOneButton  = (Button)findViewById(R.id.ai_level1_button);
-        Button aiLevelTwoButton  = (Button)findViewById(R.id.ai_level2_button);
+        Button humanButton  = findViewById(R.id.human_button);
+        Button aiLevelOneButton  = findViewById(R.id.ai_level1_button);
+        Button aiLevelTwoButton  = findViewById(R.id.ai_level2_button);
+        Button aiLevelThreeButton  = findViewById(R.id.ai_level3_button);
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) {
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         aiLevelOneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ////TODO set params for level1
                 humanVsAI.putExtra("player","ai1");
                 startActivity(humanVsAI);
             }
@@ -61,8 +61,16 @@ public class MainActivity extends AppCompatActivity {
         aiLevelTwoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ////TODO set params for level1
                 humanVsAI.putExtra("player","ai2");
+                startActivity(humanVsAI);
+            }
+        });
+
+
+        aiLevelThreeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                humanVsAI.putExtra("player","ai3");
                 startActivity(humanVsAI);
             }
         });
