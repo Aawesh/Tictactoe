@@ -1,0 +1,4 @@
+Simple tictactoe game
+Uses Q table made from https://github.com/Aawesh/TictactoeQ
+There are two Q tables, human first or ai first
+Run the code and copy it to android and then play and check whether you can win or not
